@@ -48,8 +48,8 @@ class Plugin {
 
 	public function init_components() {
 
-		require $this->plugin_path( 'includes/jet-form-builder/actions/action-iterator.php' );
-		new Jet_Form_Builder\Actions\Action_Iterator();
+		require $this->plugin_path( 'includes/jet-form-builder/manager.php' );
+		new Jet_Form_Builder\Manager();
 
 	}
 

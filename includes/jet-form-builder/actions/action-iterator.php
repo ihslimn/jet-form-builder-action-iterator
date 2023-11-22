@@ -10,7 +10,6 @@ use JFB_Action_Iterator\Plugin;
 use Jet_Form_Builder\Actions\Manager;
 use Jet_Form_Builder\Actions\Types\Base as ActionBase;
 use Jet_Form_Builder\Actions\Action_Handler;
-use Jet_Engine\Query_Builder\Manager as Queries;
 use Jet_Form_Builder\Exceptions\Action_Exception as Error;
 
 class Action_Iterator extends ActionBase {
@@ -68,6 +67,14 @@ class Action_Iterator extends ActionBase {
 		if ( ! $action ) {
 			throw new Error( 'Action not found' );
 		}
+
+		$events_list = jet_fb_action_handler()->get_events_by_id( $action_id );
+
+		$events_list->push( \Jet_Form_Builder\Actions\Events_Manager::instance()->get_never_event() );
+
+		$handler->merge_events( array(
+			$action_id => $events_list,
+		) );
 
 		$array_field = $this->settings['array_field'] ?? '';
 
