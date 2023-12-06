@@ -3,7 +3,7 @@
  * Plugin Name: JetFormBuilder - Action Iterator
  * Plugin URI:  
  * Description: 
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      ihslimn
  * Author URI:  https://github.com/ihslimn
  * Text Domain: jfb-send-password-reset

@@ -29,9 +29,17 @@ class Manager {
 				continue;
 			}
 
-			$action_id = $action->settings['action_id'];
+			$action_id = $action->settings['action_id'] ?? 0;
+
+			if ( ! $action_id ) {
+				continue;
+			}
 
 			$events_list = jet_fb_action_handler()->get_events_by_id( $action_id );
+
+			if ( ! $events_list ) {
+				continue;
+			}
 
 			$events_list->push( \Jet_Form_Builder\Actions\Events_Manager::instance()->get_never_event() );
 
