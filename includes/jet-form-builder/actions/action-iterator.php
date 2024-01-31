@@ -45,8 +45,10 @@ class Action_Iterator extends ActionBase {
 
 	public function editor_labels() {
 		return array(
-			'action_id'   => 'Action ID',
-			'array_field' => 'Field with array data',
+			'action_id'      => 'Action ID',
+			'array_field'    => 'Field with array data',
+			'throw_error'    => 'Throw error if data array empty',
+			'error_message'  => 'Error message',
 		);
 	}
 
@@ -85,7 +87,12 @@ class Action_Iterator extends ActionBase {
 		$array = $request[ $array_field ];
 
 		if ( empty( $array ) || ! is_array( $array ) ) {
-			throw new Error( 'No data' );
+			
+			if ( $this->settings['throw_error'] ?? false ) {
+				throw new Error( $this->settings['error_message'] ?? 'No data in array' );
+			}
+
+			return;
 		}
 
 		foreach ( $array as $item ) {
