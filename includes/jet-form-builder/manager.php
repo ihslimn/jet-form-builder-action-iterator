@@ -35,13 +35,19 @@ class Manager {
 				continue;
 			}
 
-			$events_list = jet_fb_action_handler()->get_events_by_id( $action_id );
+			$action_ids = wp_parse_list( $action_id );
 
-			if ( ! $events_list ) {
-				continue;
+			foreach ( $action_ids as $action_id ) {
+
+				$events_list = jet_fb_action_handler()->get_events_by_id( $action_id );
+
+				if ( ! $events_list ) {
+					continue;
+				}
+
+				$events_list->push( \Jet_Form_Builder\Actions\Events_Manager::instance()->get_never_event() );
+		
 			}
-
-			$events_list->push( \Jet_Form_Builder\Actions\Events_Manager::instance()->get_never_event() );
 
 		}
 

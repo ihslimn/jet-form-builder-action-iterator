@@ -61,22 +61,8 @@ class Action_Iterator extends ActionBase {
 		$action_id = $this->settings['action_id'] ?? '';
 
 		if ( empty( $action_id ) ) {
-			throw new Error( 'No action ID' );
+			throw new Error( 'No action ID(s)' );
 		}
-
-		$action = $handler->get_action( $action_id );
-
-		if ( ! $action ) {
-			throw new Error( 'Action not found' );
-		}
-
-		$events_list = jet_fb_action_handler()->get_events_by_id( $action_id );
-
-		$events_list->push( \Jet_Form_Builder\Actions\Events_Manager::instance()->get_never_event() );
-
-		$handler->merge_events( array(
-			$action_id => $events_list,
-		) );
 
 		$array_field = $this->settings['array_field'] ?? '';
 
@@ -95,15 +81,52 @@ class Action_Iterator extends ActionBase {
 			return;
 		}
 
+		$action_ids = wp_parse_list( $action_id );
+
+		$actions = array();
+
+		foreach ( $action_ids as $action_id ) {
+
+			$action = $handler->get_action( $action_id );
+
+			if ( ! $action ) {
+				throw new Error( "Action {$action_id} not found" );
+				return;
+			}
+
+			$actions[ $action_id ] = $action;
+
+			$handler->save_action(
+				$action,
+				array(
+					'conditions' => array(
+						array(
+							'__visible' => true,
+							'operator'  => 'equal',
+							'field'     => '_will_never_ever',
+							'default'   => '_run_in_the_flow',
+							'execute'   => true,
+						),
+					),
+				),
+			);
+
+		}
+
 		foreach ( $array as $item ) {
+
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
 
 			foreach ( $item as $key => $value ) {
 				$request[ $key ] = $value;
 				jet_fb_context()->update_request( $value, $key );
-
 			}
 
-			$action->do_action( $request, $handler );
+			foreach( $actions as $action ) {
+				$action->do_action( $request, $handler );
+			}
 
 		}
 
